@@ -1,7 +1,27 @@
-# Unscented Kalman Filter Project Starter Code
-Self-Driving Car Engineer Nanodegree Program
+# Unscented Kalman Filter
 
-In this project utilize an Unscented Kalman Filter to estimate the state of a moving object of interest with noisy lidar and radar measurements. Passing the project requires obtaining RMSE values that are lower that the tolerance outlined in the project rubric. 
+[//]: # (Image References)
+[image0]: ./docs/UKF.png
+[image1]: ./docs/EKF.png
+
+In this Self-Driving Car Engineer Nanodegree Program project I utilize the kalman filter to estimate the state of a moving object of interest with noisy lidar and radar measurements. The two different types (modalities) of sensors provide/measure the followig properties:
+
+* A lidar sensor measures the position in cartesian-coordinates (x, y).
+* A radar sensor measures the position and relative velocity (the velocity within line of sight) in polar coordinates (rho, phi, drho).
+
+The Unscented Kalman Filter (UKF) predicts the position and how fast we are going in what direction at any point in time. The UKF in this repository assumes a constant turn/yaw rate and velocity magnitude model (CTRV) for this particular system. Compared to the Extended Kalman Filter with a constant velocity model, the RMSE of the UKF should be lower especially for velocity. The CTRV model is more precise than a constant velocity model. Moreover, the UKF is also known for handling non-linear equations better than EKF. 
+
+Detailed description of the UKF can be find in this [paper](https://www.seas.harvard.edu/courses/cs281/papers/unscented.pdf). 
+
+The result of the prediction as well as the RMSE is depected on the figure below.
+
+![alt text][image0]
+
+The RMSE of the UKF is lower than the one of the [EKF](https://github.com/frtunikj/sdc_extended_kalman_filter) - see figure below.
+
+![alt text][image1]
+
+## Unscented Kalman Filter Project Starter Code
 
 This project involves the Term 2 Simulator which can be downloaded [here](https://github.com/udacity/self-driving-car-sim/releases)
 
