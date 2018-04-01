@@ -202,6 +202,7 @@ void UKF::Prediction(double delta_t) {
  */
 
 void UKF::GenerateAugmentedSigmaPoints() {
+    // Udacity Code
 
     //create augmented mean vector
     VectorXd x_aug = VectorXd(n_aug_);
@@ -239,7 +240,8 @@ void UKF::GenerateAugmentedSigmaPoints() {
  *        measurement and this one.
  */
 void UKF::PredictSigmaPoints(double delta_t) {
-
+    // Udacity Code
+    
     //predict sigma points
     for (int i = 0; i < 2 * n_aug_ + 1; i++) {
         // extract values for better readability
@@ -288,7 +290,7 @@ void UKF::PredictSigmaPoints(double delta_t) {
  * Predict state vector and state covariance matrix.
  */
 void UKF::PredictMeanAndCovariance() {
-
+    // Udacity Code
     // predicted state mean
     x_.fill(0.0);
 
