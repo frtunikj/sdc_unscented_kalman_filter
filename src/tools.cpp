@@ -5,62 +5,56 @@ using Eigen::VectorXd;
 using Eigen::MatrixXd;
 using std::vector;
 
-Tools::Tools() {
-}
+Tools::Tools() {}
 
-Tools::~Tools() {
-}
+Tools::~Tools() {}
 
 VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
-        const vector<VectorXd> &ground_truth) {
-    /**
-     * Calculate the RMSE here.
-     */
-    VectorXd diff(4), rmse(4);
-    diff << 0, 0, 0, 0;
-    rmse << 0, 0, 0, 0;
+                              const vector<VectorXd> &ground_truth) {
+  /**
+    * Calculate the RMSE here.
+  */
+  VectorXd diff(4), rmse(4);
+  diff << 0,0,0,0;
+  rmse << 0, 0, 0, 0;
+  
+  // check the validity of the following inputs:
+  //  * the estimation vector size should not be zero
+  //  * the estimation vector size should equal ground truth vector size
+  if(estimations.size() != ground_truth.size() || estimations.size() == 0) {
+    cout << "Invalid estimation or ground_truth data" << endl;
+    return rmse;
+  }
+  
+  // accumulate squared residuals
+  for(unsigned int i=0; i < estimations.size(); ++i){
+    
+    diff = estimations[i] - ground_truth[i];
+    diff = diff.array() * diff.array();
 
-    if (estimations.size() != ground_truth.size()) {
-        throw std::runtime_error("Estimations and ground truth vectors must have the same size!");
-    } else if (estimations.size() == 0) {
-        throw std::runtime_error("Estimations vector has zero length!");
-    } else if (ground_truth.size() == 0) {
-        throw std::runtime_error("Ground truth vector has zero length!");}
-
-    for (std::size_t i = 0; i < estimations.size(); ++i) {
-        diff = estimations[i] - ground_truth[i];
-        diff = diff.array() * diff.array();
-
-        rmse += diff;
-    }
-
-    rmse = rmse / estimations.size();
-    return rmse.array().sqrt();
+    rmse += diff;
+  }
+  
+  //calculate the mean and squared root
+  rmse = rmse / estimations.size();
+  rmse = rmse.array().sqrt();
+  
+  return rmse;
 }
 
-MatrixXd Tools::CalculateJacobian(const VectorXd & x_state) {
-    /**
-     * Calculate a Jacobian here.
-     */
-    MatrixXd H_j(3, 4);
-    
-    float px = x_state(0);
-    float py = x_state(1);
-    float vx = x_state(2);
-    float vy = x_state(3);
-
-    float ms = px * px + py*py;
-    float rms = sqrt(ms);
-    float rms_cubed = ms*rms;
-
-    // Check for division by zero
-    if (rms < std::numeric_limits<float>::epsilon()) {
-        throw std::runtime_error("Division by zero!");
-    }
-
-    H_j << px / rms, py / rms, 0, 0,
-            -py / ms, px / ms, 0, 0,
-            py * (vx * py - vy * px) / rms_cubed, px * (vy * px - vx * py) / rms_cubed, px / rms, py / rms;
-
-    return H_j;
+/**
+ * Calculates the Normalized Innovation Squared (NIS) value.
+ *
+ * @param measurements      Measurement z_k+1.
+ * @param pred_measurements Predicted measurement z_k+1|k
+ * @param S                 Predicted measurement covariance matrix S_k+1|k.
+ *
+ * @return NIS value.
+ */
+double Tools::CalculateNIS(const VectorXd &z, const VectorXd &z_pred, const MatrixXd &S) {
+  
+  VectorXd z_diff = z - z_pred;
+  double e = z_diff.transpose() * S.inverse() * z_diff;
+  
+  return e;
 }

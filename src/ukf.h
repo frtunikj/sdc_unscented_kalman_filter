@@ -3,6 +3,7 @@
 
 #include "measurement_package.h"
 #include "Eigen/Dense"
+#include "tools.h"
 #include <vector>
 #include <string>
 #include <fstream>
@@ -27,9 +28,20 @@ public:
 
   ///* state covariance matrix
   MatrixXd P_;
+  
+  ///* Augmented sigma points
+  MatrixXd Xsig_aug_;
 
   ///* predicted sigma points matrix
   MatrixXd Xsig_pred_;
+  
+  VectorXd z_pred_lidar_;
+  MatrixXd S_pred_lidar_;
+  MatrixXd Zsig_pred_lidar_;
+  
+  VectorXd z_pred_radar_;
+  MatrixXd S_pred_radar_;
+  MatrixXd Zsig_pred_radar_;
 
   ///* time when the state is true, in us
   long long time_us_;
@@ -63,11 +75,24 @@ public:
 
   ///* Augmented state dimension
   int n_aug_;
+  
+  int n_z_lidar_;
+  int n_z_radar_;
 
   ///* Sigma point spreading parameter
   double lambda_;
 
-
+  ///* NIS values RADAR
+  double NIS_radar_;
+  
+  ///* NIS values LIDAR
+  double NIS_lidar_;
+  
+private:
+  ///* Tools to calculate NIS
+  Tools tools_;
+  
+public:
   /**
    * Constructor
    */
@@ -90,18 +115,28 @@ public:
    * @param delta_t Time between k and k+1 in s
    */
   void Prediction(double delta_t);
+  
+  void PredictLidarMeasurement(MeasurementPackage meas_package);
 
   /**
    * Updates the state and the state covariance matrix using a laser measurement
    * @param meas_package The measurement at k+1
    */
   void UpdateLidar(MeasurementPackage meas_package);
+  
+  void PredictRadarMeasurement(MeasurementPackage meas_package);
 
   /**
    * Updates the state and the state covariance matrix using a radar measurement
    * @param meas_package The measurement at k+1
    */
   void UpdateRadar(MeasurementPackage meas_package);
+  
+private:
+  
+  void GenerateAugmentedSigmaPoints();
+  void PredictSigmaPoints(double delta_t);
+  void PredictMeanAndCovariance();
 };
 
 #endif /* UKF_H */

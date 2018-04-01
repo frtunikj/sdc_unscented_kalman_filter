@@ -23,11 +23,11 @@ public:
   * A helper method to calculate RMSE.
   */
   VectorXd CalculateRMSE(const vector<VectorXd> &estimations, const vector<VectorXd> &ground_truth);
-
+  
   /**
-  * A helper method to calculate Jacobians.
-  */
-  MatrixXd CalculateJacobian(const VectorXd& x_state);
+   * Calculated the NIS - Normalized Innovation Squared.
+   */
+  double CalculateNIS(const VectorXd &z, const VectorXd &z_pred, const MatrixXd &S);
 
 };
 
